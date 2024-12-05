@@ -3,9 +3,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Alert } from
 import { useCart } from '@/context/CartContext';
 
 const CartScreen: React.FC = () => {
-  const { cartItems, updateQuantity, removeItem, calculateTotal } = useCart();
+  const { cartItems, updateQuantity, removeItem, calculateTotal, checkout } = useCart();
 
   const handleCheckout = () => {
+    checkout();
     Alert.alert('Checkout', 'Proceeding to checkout!');
   };
 
