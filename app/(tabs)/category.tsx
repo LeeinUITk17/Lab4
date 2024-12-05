@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   FlatList,
   TouchableOpacity,
+  Image,
   ActivityIndicator,
   Alert,
   ScrollView,
@@ -20,10 +20,11 @@ interface Product {
   category: string;
 }
 
-const HomeScreen: React.FC = () => {
+const CategoryScreen: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<Record<string, Product[]>>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   useEffect(() => {
     const fetchCategoriesAndProducts = async () => {
@@ -42,6 +43,7 @@ const HomeScreen: React.FC = () => {
         }
 
         setProductsByCategory(categoryProducts);
+        setSelectedCategory(categoryData[0]); // Set default category
       } catch (error) {
         Alert.alert('Error', 'Failed to load categories or products.');
         console.error(error);
@@ -85,24 +87,47 @@ const HomeScreen: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <Header />
-      {categories.map((category) => (
-        <View key={category} style={styles.categorySection}>
-          <Text style={styles.categoryTitle}>{category.toUpperCase()}</Text>
-          <FlatList
-            data={productsByCategory[category]}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderProduct}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoryList}
-          />
-        </View>
-      ))}
+      <FlatList
+        data={categories}
+        keyExtractor={(item) => item}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[
+              styles.categoryItem,
+              item === selectedCategory && styles.selectedCategoryItem,
+            ]}
+            onPress={() => setSelectedCategory(item)}
+          >
+            <Text
+              style={[
+                styles.categoryText,
+                item === selectedCategory && styles.selectedCategoryText,
+              ]}
+            >
+              {item.toUpperCase()}
+            </Text>
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={styles.categoryList}
+      />
+      <View style={styles.productsContainer}>
+        <Text style={styles.categoryTitle}>{selectedCategory.toUpperCase()}</Text>
+        <FlatList
+          data={productsByCategory[selectedCategory] || []}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderProduct}
+          numColumns={2}
+          contentContainerStyle={styles.productList}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </ScrollView>
   );
 };
 
-export default HomeScreen;
+export default CategoryScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -115,25 +140,48 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  categorySection: {
-    marginBottom: 20,
+  categoryList: {
     paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  categoryItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#f4f4f4',
+    borderRadius: 20,
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedCategoryItem: {
+    backgroundColor: '#007bff',
+  },
+  categoryText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  selectedCategoryText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   categoryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginVertical: 10,
   },
-  categoryList: {
+  productsContainer: {
+    marginHorizontal: 10,
+  },
+  productList: {
     paddingBottom: 10,
   },
   productCard: {
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
-    marginRight: 10,
-    width: 150,
+    margin: 5,
+    flex: 1,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
