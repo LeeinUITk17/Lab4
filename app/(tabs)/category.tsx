@@ -19,13 +19,14 @@ interface Product {
   image: string;
   category: string;
 }
+import { useCart } from '@/context/CartContext';
 
 const CategoryScreen: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<Record<string, Product[]>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-
+  const {addItem} = useCart();
   useEffect(() => {
     const fetchCategoriesAndProducts = async () => {
       try {
@@ -43,7 +44,7 @@ const CategoryScreen: React.FC = () => {
         }
 
         setProductsByCategory(categoryProducts);
-        setSelectedCategory(categoryData[0]); // Set default category
+        setSelectedCategory(categoryData[0]); 
       } catch (error) {
         Alert.alert('Error', 'Failed to load categories or products.');
         console.error(error);
@@ -56,8 +57,15 @@ const CategoryScreen: React.FC = () => {
   }, []);
 
   const handleAddToCart = (product: Product) => {
+    const cartItem = {
+      ...product,
+      id: product.id.toString(),
+      name: product.title,
+      imgae: product.image,
+      quantity: 1,
+    };
+    addItem(cartItem);
     Alert.alert('Cart', `${product.title} has been added to your cart.`);
-    // Implement cart logic here
   };
 
   const renderProduct = ({ item }: { item: Product }) => (

@@ -1,59 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { useCart } from '@/context/CartContext';
 
 const CartScreen: React.FC = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Product 1',
-      price: 50,
-      quantity: 1,
-      image: 'https://via.placeholder.com/100',
-    },
-    {
-      id: '2',
-      name: 'Product 2',
-      price: 75,
-      quantity: 2,
-      image: 'https://via.placeholder.com/100',
-    },
-  ]);
-
-  const handleQuantityChange = (itemId: string, increment: boolean) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId
-          ? {
-              ...item,
-              quantity: Math.max(item.quantity + (increment ? 1 : -1), 1),
-            }
-          : item
-      )
-    );
-  };
-
-  const handleRemoveItem = (itemId: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
-  };
-
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
-  };
+  const { cartItems, updateQuantity, removeItem, calculateTotal } = useCart();
 
   const handleCheckout = () => {
     Alert.alert('Checkout', 'Proceeding to checkout!');
-    // Add your checkout navigation logic here
   };
 
-  const renderCartItem = ({ item }: { item: CartItem }) => (
+  const renderCartItem = ({ item }: { item: any }) => (
     <View style={styles.cartItem}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
@@ -62,22 +18,21 @@ const CartScreen: React.FC = () => {
         <View style={styles.quantityContainer}>
           <TouchableOpacity
             style={styles.quantityButton}
-            onPress={() => handleQuantityChange(item.id, false)}
+            onPress={() => updateQuantity(item.id, false)}
           >
             <Text style={styles.quantityButtonText}>-</Text>
           </TouchableOpacity>
           <Text style={styles.quantity}>{item.quantity}</Text>
           <TouchableOpacity
             style={styles.quantityButton}
-            onPress={() => handleQuantityChange(item.id, true)}
+            onPress={() => updateQuantity(item.id, true)}
           >
             <Text style={styles.quantityButtonText}>+</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleRemoveItem(item.id)}>
-          <Text style={styles.removeText}>Remove</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => removeItem(item.id)}>
+            <Text style={styles.removeText}>Remove</Text>
+          </TouchableOpacity>
         </View>
-       
       </View>
     </View>
   );
@@ -89,7 +44,6 @@ const CartScreen: React.FC = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderCartItem}
         ListEmptyComponent={<Text style={styles.emptyText}>Your cart is empty.</Text>}
-        style={styles.cartList}
       />
       {cartItems.length > 0 && (
         <View style={styles.footer}>
@@ -105,10 +59,12 @@ const CartScreen: React.FC = () => {
 
 export default CartScreen;
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f5f7', // Soft background color
+    backgroundColor: '#f4f5f7', 
     padding: 20,
   },
   cartList: {
@@ -125,7 +81,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 6, // Enhanced shadow
+    elevation: 6, 
   },
   itemImage: {
     width: 80,
@@ -139,7 +95,7 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 18,
-    fontWeight: '600', // Slightly bolder for product name
+    fontWeight: '600', 
     color: '#333',
   },
   itemPrice: {
@@ -160,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     borderRadius: 16,
     marginHorizontal: 8,
-    elevation: 3, // Button shadow
+    elevation: 3, 
   },
   quantityButtonText: {
     color: '#fff',
@@ -208,7 +164,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 8,
     alignItems: 'center',
-    elevation: 5, // Added shadow for button
+    elevation: 5, 
   },
   checkoutButtonText: {
     color: '#fff',

@@ -19,21 +19,19 @@ interface Product {
   image: string;
   category: string;
 }
+import { useCart } from '@/context/CartContext';
 
 const HomeScreen: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<Record<string, Product[]>>({});
   const [loading, setLoading] = useState<boolean>(true);
-
+  const {addItem} = useCart();
   useEffect(() => {
     const fetchCategoriesAndProducts = async () => {
       try {
-        // Fetch categories
         const categoryResponse = await fetch('https://fakestoreapi.com/products/categories');
         const categoryData = await categoryResponse.json();
         setCategories(categoryData);
-
-        // Fetch products for each category
         const categoryProducts: Record<string, Product[]> = {};
         for (const category of categoryData) {
           const productResponse = await fetch(`https://fakestoreapi.com/products/category/${category}`);
@@ -54,8 +52,15 @@ const HomeScreen: React.FC = () => {
   }, []);
 
   const handleAddToCart = (product: Product) => {
+    const cartItem = {
+      ...product,
+      id: product.id.toString(),
+      name: product.title,
+      imgae: product.image,
+      quantity: 1,
+    };
+    addItem(cartItem);
     Alert.alert('Cart', `${product.title} has been added to your cart.`);
-    // Implement cart logic here
   };
 
   const renderProduct = ({ item }: { item: Product }) => (

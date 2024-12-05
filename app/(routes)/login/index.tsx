@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
-
+import { useRouter } from 'expo-router';
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const router = useRouter();
   const handleLogin = () => {
     if (email && password) {
       Alert.alert('Login', `Welcome back, ${email}!`);
+      router.push('(tabs)');
     } else {
       Alert.alert('Error', 'Please enter both email and password.');
     }
