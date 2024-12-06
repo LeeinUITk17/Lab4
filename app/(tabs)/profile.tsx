@@ -1,26 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router'; 
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useProfile } from '@/context/ProfileContext';
 
 const ProfileScreen: React.FC = () => {
-  const router = useRouter(); 
-
-  const user = {
-    name: 'Le Thanh Tai',
-    email: '22521276@gm.uit.edu.vn',
-    phone: '0356356497',
-    address: 'Ho Chi Minh City, Vietnam',
-    picture: 'https://res.cloudinary.com/dbonwxmgl/image/upload/v1733161834/mnbu7jum3zitwhciwjhn.jpg', 
-  };
-
-  const handleLogout = () => {
-    Alert.alert('Logout', 'You have been logged out.', [
-      {
-        text: 'OK',
-        onPress: () => router.push('/login'), 
-      },
-    ]);
-  };
+  const router = useRouter();
+  const { user } = useProfile(); 
 
   return (
     <ScrollView style={styles.container}>
@@ -39,8 +24,8 @@ const ProfileScreen: React.FC = () => {
       </View>
 
       <View style={styles.menu}>
-        <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={handleLogout}>
-          <Text style={[styles.menuText, styles.logoutText]}>Logout</Text>
+        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(routes)/edit')}>
+          <Text style={styles.menuText}>Edit Information</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

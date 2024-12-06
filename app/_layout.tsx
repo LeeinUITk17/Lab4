@@ -9,6 +9,7 @@ import { CartProvider } from '@/context/CartContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import Loading from '@/components/22521276/loading';
+import { ProfileProvider } from '@/context/ProfileContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,10 +40,13 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <CartProvider>
         {isLoggedIn ? (
-          <Stack screenOptions={{ headerShown: false }}>
+         <ProfileProvider>
+           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="(routes)/edit/index" />
             <Stack.Screen name="+not-found" />
           </Stack>
+         </ProfileProvider>
         ) : (
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(routes)/login/index" />
