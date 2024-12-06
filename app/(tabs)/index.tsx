@@ -20,6 +20,7 @@ interface Product {
   category: string;
 }
 import { useCart } from '@/context/CartContext';
+import Loading from '@/components/22521276/loading';
 
 const HomeScreen: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -81,9 +82,7 @@ const HomeScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
-      </View>
+      <Loading/>
     );
   }
 

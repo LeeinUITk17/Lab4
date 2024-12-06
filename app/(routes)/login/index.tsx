@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email && password) {
       Alert.alert('Login', `Welcome back, ${email}!`);
+      await AsyncStorage.setItem('token', 'dummy-token');
       router.push('(tabs)');
     } else {
       Alert.alert('Error', 'Please enter both email and password.');
